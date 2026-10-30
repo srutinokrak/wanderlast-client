@@ -1,13 +1,24 @@
+"use client";
 import Link from "next/link";
 import { CircleUserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "./ui/button";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Destinations", href: "/destinations" },
-  {label: 'Add Destination',href: "/add-destination"},
+  { label: "Add Destination", href: "/add-destination" },
   { label: "My Bookings", href: "/bookings" },
-  
 ];
 
 const accountLinks = [
@@ -16,6 +27,15 @@ const accountLinks = [
 ];
 
 export default function Navbar() {
+  const { data: session } = authClient.useSession();
+
+  const user = session?.user;
+
+  const handleSignout = () =>{
+    authClient.signOut()
+  }
+
+  console.log(user);
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur">
       <nav className="relative mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -27,7 +47,7 @@ export default function Navbar() {
                 href={link.href}
                 className={cn(
                   "text-sm font-semibold text-foreground transition-colors hover:text-primary",
-                  link.label === "Home" && "text-primary"
+                  link.label === "Home" && "text-primary",
                 )}
               >
                 {link.label}
@@ -55,7 +75,28 @@ export default function Navbar() {
               Profile
             </Link>
           </li>
-          {accountLinks.map((link) => (
+
+         {user?    <Popover>
+            <PopoverTrigger render={ <Avatar>
+            <AvatarImage
+              referrerPolicy="no-referrer"
+              src={user?.image as string}
+            />
+            <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+          </Avatar>}>
+          
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverHeader>
+                <PopoverTitle>{user?.name}</PopoverTitle>
+                <PopoverDescription>
+                  <p>{user?.email}</p>
+                  <Button onClick={handleSignout} variant={'destructive'}>SignOut</Button>
+                </PopoverDescription>
+              </PopoverHeader>
+            </PopoverContent>
+          </Popover> : <>
+              {accountLinks.map((link) => (
             <li key={link.label}>
               <Link
                 href={link.href}
@@ -65,6 +106,13 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
+           
+          </> 
+           }
+
+      
+
+        
         </ul>
       </nav>
 
@@ -76,7 +124,7 @@ export default function Navbar() {
               href={link.href}
               className={cn(
                 "whitespace-nowrap text-sm font-semibold text-foreground",
-                link.label === "Home" && "text-primary"
+                link.label === "Home" && "text-primary",
               )}
             >
               {link.label}
