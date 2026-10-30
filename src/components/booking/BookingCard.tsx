@@ -2,6 +2,7 @@
 import { authClient } from '@/lib/auth-client';
 import { Destination } from '@/types/destination';
 import { ArrowRight, Calendar, CheckCircle2 } from 'lucide-react';
+import { Input } from '../ui/input';
 
 
 const BookingCard = ({destination}:{destination:Destination}) => {
@@ -31,10 +32,12 @@ const BookingCard = ({destination}:{destination:Destination}) => {
               {/* Departure Date Box */}
               <div className="bg-white p-3.5 rounded-lg border border-gray-200 flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-teal-600 shrink-0" />
-                <div>
-                  <p className="text-xs text-gray-400 font-medium">Departure Date</p>
-                  <p className="text-sm font-bold text-gray-800">{destination.departureDate}</p>
-                </div>
+              <Input  
+               type= "date"
+               aria-label='Departure date'
+               defaultValue={destination.departureDate}
+               className='mt-4'
+              />
               </div>
 
               {/* CTA Button */}
